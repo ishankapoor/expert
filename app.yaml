@@ -1,0 +1,14 @@
+application: smelookup
+version: 1
+runtime: python27
+api_version: 1
+threadsafe: true
+
+handlers:
+- url: /(.+)
+  static_files: site/\1
+  upload: site/(.*)
+
+- url: /
+  static_files: site/index.html
+  upload: site/index.html

@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html ng-app="app" ng-controller="tableData">
+    <head>
+        <title>Expert Lookup Sheet</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+                <!--script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.0.7/angular.min.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.0.7/angular-sanitize.min.js"></script-->
+		<script src="angular.min.js"></script>
+		<script src="angular-sanitize.min.js"></script>
+        <style type="text/css">
+            table
+            {
+                border: 1px solid #000;
+            }
+			.search-box {
+			display: block;
+			margin: 5px auto 5px auto;
+			padding: 5px;
+			width:75%;
+}
+						.super-class {
+    background-color: yellow;
+}
+			.super-class-first {
+    background-color: yellow;
+}
+			.super-class-second {
+    background-color: #FA5858;
+}
+			.super-class-third {
+    background-color: #00FFFF;
+}
+			.super-class-fourth {
+    background-color: #FF0080;
+}
+        </style>
+    </head>
+    <body>
+        <div><input ng-model="search" class="search-box" placeholder="Search"type="search"/></div>
+            <table>
+                <tr>
+				<th>#</th>
+                    <th>First Name</th>
+                    <th>Last Name</th>
+					<th>email</th>
+                    <th>Specialization</th>
+					<th>Timezone</th>
+                </tr>
+          <tr ng-repeat="ee in list | and:search">
+		  				    <td>{{$index + 1}}</td>
+                    <td>{{ee.fname}}</td>
+                    <td>{{ee.lname}}</td>
+					<td>{{ee.email}}</td>
+                    <td ng-bind-html="ee.skills | hilightfilter:search">{{ee.skills}}</td>
+					<td ng-bind-html="ee.timezone | hilightfilter:search">{{ee.timezone}}</td>
+					</tr>
+					</table>
+        <script>
+
+		var app = angular.module('app', ['ngSanitize']);
+		app.controller('tableData', function($scope, $http)
+            {
+				$http.defaults.headers.common["X-Custom-Header"] = "Angular.js";
+                $http.get('experts.json').success(function(data, status, headers, config)
+				{
+				$scope.list = data;
+				});
+            });
+			app.filter('and', function($log) {
+  return function(items, query) {
+    if (!query) return items; // return all items if nothing in query box
+    
+    var terms = query.split(' ');
+    var arrayToReturn = [];
+    
+    items.forEach(function(item){ // iterate through array of items
+      var passTest = true;
+      terms.forEach(function(term){ // iterate through terms found in query box
+        // if any terms aren't found, passTest becomes and remains false
+        passTest = passTest && ((item.skills.toLowerCase().indexOf(term.toLowerCase()) > -1)||(item.timezone.toLowerCase().indexOf(term.toLowerCase()) > -1)||(item.fname.toLowerCase().indexOf(term.toLowerCase()) > -1)||(item.lname.toLowerCase().indexOf(term.toLowerCase()) > -1));
+      });
+      // Add item to return array only if passTest is true -- all search terms were found in item
+      if (passTest) { arrayToReturn.push(item); }
+    });
+    
+    return arrayToReturn;
+  }
+});
+app.filter('hilightfilter', function() {
+        return function (input, query) {
+    if (query)
+	{
+    var terms = query.match(/\S+/g);
+	if (terms.length == 2)
+	{
+	return input.replace(RegExp('('+ terms[1] + ')', 'gi'),'<span class="super-class-second">$1</span>').replace(RegExp('('+ terms[0] + ')', 'gi'),'<span class="super-class-first">$1</span>');
+	}
+	if (terms.length == 3)
+	{
+	return input.replace(RegExp('('+ terms[2] + ')', 'gi'),'<span class="super-class-third">$1</span>').replace(RegExp('('+ terms[1] + ')', 'gi'),'<span class="super-class-second">$1</span>').replace(RegExp('('+ terms[0] + ')', 'gi'),'<span class="super-class-first">$1</span>');
+	}
+	if (terms.length == 4)
+	{
+	return input.replace(RegExp('('+ terms[3] + ')', 'gi'),'<span class="super-class-fourth">$1</span>').replace(RegExp('('+ terms[2] + ')', 'gi'),'<span class="super-class-third">$1</span>').replace(RegExp('('+ terms[1] + ')', 'gi'),'<span class="super-class-second">$1</span>').replace(RegExp('('+ terms[0] + ')', 'gi'),'<span class="super-class-first">$1</span>');
+	}
+
+	return input.replace(RegExp('('+ terms[0] + ')', 'gi'), '<span class="super-class">$1</span>');
+	}
+	return input.replace(RegExp('('+ query + ')', 'gi'), '<span class="super-class">$1</span>');
+	   }
+    });
+
+	</script>
+    </body>
+</html>
