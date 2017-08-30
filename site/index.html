@@ -18,6 +18,10 @@
 			padding: 5px;
 			width:75%;
 }
+            .message{
+			text-align:center;
+			background-color:yellow;
+			}
 						.super-class {
     background-color: yellow;
 }
@@ -33,9 +37,10 @@
 			.super-class-fourth {
     background-color: #FF0080;
 }
-        </style>
+</style>
     </head>
     <body>
+	<div class="message">This tool is only provided for quick reference please go <a href="https://iss.nbttech.com/people/index.htm">here</a> for the official SME lookup!</div>
         <div><input ng-model="search" class="search-box" placeholder="Search"type="search"/></div>
             <table>
                 <tr>
@@ -44,15 +49,15 @@
                     <th>Last Name</th>
 					<th>email</th>
                     <th>Specialization</th>
-					<th>Timezone</th>
+					<th>Location</th>
                 </tr>
           <tr ng-repeat="ee in list | and:search">
 		  				    <td>{{$index + 1}}</td>
                     <td>{{ee.fname}}</td>
                     <td>{{ee.lname}}</td>
 					<td>{{ee.email}}</td>
-                    <td ng-bind-html="ee.skills | hilightfilter:search">{{ee.skills}}</td>
-					<td ng-bind-html="ee.timezone | hilightfilter:search">{{ee.timezone}}</td>
+                    <td ng-bind-html="ee.specialization | hilightfilter:search">{{ee.specialization}}</td>
+					<td ng-bind-html="ee.location | hilightfilter:search">{{ee.location}}</td>
 					</tr>
 					</table>
         <script>
@@ -61,7 +66,7 @@
 		app.controller('tableData', function($scope, $http)
             {
 				$http.defaults.headers.common["X-Custom-Header"] = "Angular.js";
-                $http.get('experts.json').success(function(data, status, headers, config)
+                $http.get('people.json').success(function(data, status, headers, config)
 				{
 				$scope.list = data;
 				});
@@ -77,7 +82,7 @@
       var passTest = true;
       terms.forEach(function(term){ // iterate through terms found in query box
         // if any terms aren't found, passTest becomes and remains false
-        passTest = passTest && ((item.skills.toLowerCase().indexOf(term.toLowerCase()) > -1)||(item.timezone.toLowerCase().indexOf(term.toLowerCase()) > -1)||(item.fname.toLowerCase().indexOf(term.toLowerCase()) > -1)||(item.lname.toLowerCase().indexOf(term.toLowerCase()) > -1));
+        passTest = passTest && ((item.specialization.toLowerCase().indexOf(term.toLowerCase()) > -1)||(item.location.toLowerCase().indexOf(term.toLowerCase()) > -1)||(item.fname.toLowerCase().indexOf(term.toLowerCase()) > -1)||(item.lname.toLowerCase().indexOf(term.toLowerCase()) > -1));
       });
       // Add item to return array only if passTest is true -- all search terms were found in item
       if (passTest) { arrayToReturn.push(item); }
